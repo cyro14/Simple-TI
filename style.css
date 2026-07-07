@@ -1,0 +1,260 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+header {
+    background-color: #1e272e;
+    color: #fff;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav button {
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+nav button:hover,
+nav button.active {
+    background: white;
+    color: #1e272e;
+}
+
+main {
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.tab-content {
+    display: none;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content.active {
+    display: block;
+}
+
+h2 {
+    margin-bottom: 1rem;
+    color: #1e272e;
+}
+
+h3 {
+    margin: 1.5rem 0 1rem;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+input,
+select {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1;
+}
+
+button[type="submit"],
+.btn-action,
+.modal-content button {
+    background-color: #0fb9b1;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+button[type="submit"]:hover,
+.btn-action:hover,
+.modal-content button:hover {
+    background-color: #0ca9a1;
+}
+
+.data-list li {
+    background: #f8f9fa;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #eee;
+}
+
+.data-list li.clickable:hover {
+    background: #e9ecef;
+    cursor: pointer;
+}
+
+.os-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.os-card {
+    background: #fff;
+    border: 1px solid #e1e8ed;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 5px solid #fa8231;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.os-card.concluido {
+    border-left-color: #20bf6b;
+    opacity: 0.9;
+}
+
+.os-card p {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.os-card hr {
+    margin: 1rem 0;
+    border: 0;
+    border-top: 1px solid #f1f2f6;
+}
+
+.client-link {
+    color: #3867d6;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.client-link:hover {
+    text-decoration: underline;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-group .btn-action {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Modais */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #333;
+}
+
+.item-linha {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    background: #f1f2f6;
+    padding: 4px 8px;
+    margin-top: 2px;
+    border-radius: 4px;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn-warning {
+    background-color: #f1c40f;
+    color: #333;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-warning:hover {
+    background-color: #f39c12;
+}
+
+.btn-edit {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.btn-edit:hover {
+    background-color: #d68910;
+}

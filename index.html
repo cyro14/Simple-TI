@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC & CIA - Gestão de TI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>PC & CIA - Gestão de TI</h1>
+        <nav>
+            <button onclick="showTab('servicos')" class="nav-btn active">Tela Inicial (OS)</button>
+            <button onclick="showTab('clientes')" class="nav-btn">Clientes</button>
+            <button onclick="showTab('pecas')" class="nav-btn">Peças</button>
+            <button onclick="showTab('catalogo-servicos')" class="nav-btn">Serviços</button>
+            <button onclick="showTab('historico')" class="nav-btn">Histórico</button>
+            <button onclick="showTab('relatorios')" class="nav-btn">Relatórios</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Aba: Serviços (OS) - TELA INICIAL -->
+        <section id="servicos" class="tab-content active">
+            <h2>Nova Ordem de Serviço</h2>
+            <form id="form-os">
+                <select id="os-cliente" required>
+                    <option value="">Selecione o Cliente</option>
+                </select>
+                <input type="text" id="os-defeito" placeholder="Defeito / Equipamento" required>
+                <input type="date" id="os-data-agendada" title="Data Agendada (Opcional)">
+                <input type="text" id="os-observacoes" placeholder="Observações (Opcional)">
+                <button type="submit">Abrir OS</button>
+            </form>
+
+            <h3>OS em Aberto</h3>
+            <div id="lista-os-abertas" class="os-grid"></div>
+
+            <div style="background: #e9ecef; padding: 10px; border-radius: 4px; margin-top: 20px;">
+                <h3>📅 Calendário do Dia</h3>
+                <input type="date" id="calendario-filtro" onchange="atualizarTelas()"
+                    style="width: 100%; max-width: 300px;">
+            </div>
+
+            <h3>OS Agendadas para esta data</h3>
+            <div id="lista-os-agendadas" class="os-grid"></div>
+
+            <h3>OS Finalizadas nesta data</h3>
+            <div id="lista-os-finalizadas" class="os-grid"></div>
+        </section>
+
+        <!-- Aba: Clientes -->
+        <section id="clientes" class="tab-content">
+            <h2>Cadastrar Cliente</h2>
+            <form id="form-cliente">
+                <input type="text" id="cli-nome" placeholder="Nome do Cliente" required>
+                <input type="text" id="cli-telefone" placeholder="Telefone" required>
+                <button type="submit">Salvar Cliente</button>
+                <input type="text" id="cli-detalhes" placeholder="Descrição detalhada (Opcional)">
+            </form>
+            <h3>Lista de Clientes</h3>
+            <ul id="lista-clientes" class="data-list"></ul>
+        </section>
+
+        <!-- Aba: Peças -->
+        <section id="pecas" class="tab-content">
+            <h2>Cadastrar Peça de Reposição</h2>
+            <form id="form-peca">
+                <input type="text" id="peca-nome" placeholder="Descrição da Peça" required>
+                <input type="number" id="peca-custo" placeholder="Custo (R$)" step="0.01" required>
+                <input type="text" id="peca-detalhes" placeholder="Descrição detalhada (Opcional)">
+                <button type="submit">Salvar Peça</button>
+            </form>
+            <h3>Catálogo de Peças</h3>
+            <ul id="lista-pecas" class="data-list"></ul>
+        </section>
+
+        <!-- Aba: Catálogo de Serviços -->
+        <section id="catalogo-servicos" class="tab-content">
+            <h2>Cadastrar Serviço Padrão</h2>
+            <form id="form-catalogo-servico">
+                <input type="text" id="cat-servico-nome" placeholder="Nome do Serviço (Ex: Formatação)" required>
+                <input type="number" id="cat-servico-preco" placeholder="Preço Padrão (R$)" step="0.01" required>
+                <button type="submit">Salvar Serviço</button>
+                <input type="text" id="cat-servico-detalhes" placeholder="Descrição detalhada (Opcional)">
+            </form>
+            <h3>Catálogo de Serviços</h3>
+            <ul id="lista-catalogo-servicos" class="data-list"></ul>
+        </section>
+
+        <!-- Aba: Histórico e Buscas -->
+        <section id="historico" class="tab-content">
+            <h2>Buscar Histórico</h2>
+            <input type="text" id="busca-input" placeholder="Digite o nome do cliente ou defeito..."
+                onkeyup="buscarHistorico()">
+            <div id="resultado-busca" class="os-grid" style="margin-top: 15px;"></div>
+        </section>
+    </main>
+
+    <!-- Aba: Relatórios -->
+    <section id="relatorios" class="tab-content">
+        <h2>Relatórios de Faturamento (OS Concluídas)</h2>
+        <div
+            style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ccc; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <div>
+                <label style="font-size: 0.85rem; color: #555;">Data Início:</label><br>
+                <input type="date" id="rel-data-inicio">
+            </div>
+            <div>
+                <label style="font-size: 0.85rem; color: #555;">Data Fim:</label><br>
+                <input type="date" id="rel-data-fim">
+            </div>
+            <div>
+                <label style="font-size: 0.85rem; color: #555;">Cliente (Opcional):</label><br>
+                <select id="rel-cliente" style="min-width: 200px;">
+                    <option value="">Todos os Clientes</option>
+                </select>
+            </div>
+            <button class="btn-action" style="margin-top: 18px;" onclick="gerarRelatorio()">Gerar Relatório</button>
+        </div>
+        <div id="resultado-relatorio" style="margin-top: 20px;"></div>
+    </section>
+
+    <!-- Modais -->
+    <div id="modal-peca" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalPeca()">&times;</span>
+            <h3>Adicionar Peça à OS</h3>
+            <input type="text" id="busca-peca-modal" placeholder="Buscar peça por nome..."
+                onkeyup="filtrarPecasModal()">
+            <ul id="lista-pecas-modal" class="data-list" style="max-height: 150px; overflow-y: auto; margin-top: 10px;">
+            </ul>
+
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <h4>Criação Rápida (Nova Peça)</h4>
+                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                    <input type="text" id="quick-peca-nome" placeholder="Nome">
+                    <input type="number" id="quick-peca-custo" placeholder="R$" style="width: 80px;">
+                    <button onclick="quickAddPeca()" style="padding: 0.5rem;">Criar e Usar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-servico" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalServico()">&times;</span>
+            <h3>Adicionar Serviço à OS</h3>
+            <input type="text" id="busca-servico-modal" placeholder="Buscar serviço..."
+                onkeyup="filtrarServicosModal()">
+            <ul id="lista-servicos-modal" class="data-list"
+                style="max-height: 150px; overflow-y: auto; margin-top: 10px;"></ul>
+
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <h4>Criação Rápida (Novo Serviço)</h4>
+                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                    <input type="text" id="quick-serv-nome" placeholder="Nome">
+                    <input type="number" id="quick-serv-preco" placeholder="R$" style="width: 80px;">
+                    <button onclick="quickAddServico()" style="padding: 0.5rem;">Criar e Usar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Novo Modal de Detalhes -->
+    <div id="modal-detalhes" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modal-detalhes').style.display='none'">&times;</span>
+            <h3 id="detalhes-titulo" style="color: #2c3e50;"></h3>
+            <p id="detalhes-texto" style="margin-top: 15px; line-height: 1.6; color: #555;"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
