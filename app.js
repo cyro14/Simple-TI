@@ -41,6 +41,19 @@ function verHistoricoCliente(clienteId) {
     }
 }
 
+function verHistoricoEquipamento(equipId) {
+    if (equipId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+
+        document.getElementById('historico').classList.add('active');
+        document.querySelector('nav button:nth-child(4)').classList.add('active'); // Botão histórico
+
+        document.getElementById('busca-input').value = equipId;
+        buscarHistorico();
+    }
+}
+
 // --- Cadastros ---
 document.getElementById('form-cliente').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -69,6 +82,8 @@ document.getElementById('form-os').addEventListener('submit', (e) => {
         clienteId: parseInt(document.getElementById('os-cliente').value),
         tipo: document.getElementById('os-tipo').value,
         cabo: document.getElementById('os-cabo').checked,
+        equipamentoId: document.getElementById('os-equip-id') ? document.getElementById('os-equip-id').value : '',
+        localServico: document.getElementById('os-local') ? document.getElementById('os-local').value : 'Interno',
         defeito: document.getElementById('os-defeito').value,
         observacoes: document.getElementById('os-observacoes') ? document.getElementById('os-observacoes').value : '',
         status: 'Aberto',
@@ -302,14 +317,11 @@ function imprimirOS(osId) {
         <html><head><title>Impressão OS #${os.id}</title></head><body style="font-family: Arial, sans-serif; padding: 20px;">
             <h2>Ordem de Serviço #${os.id.toString().slice(-4)}</h2>
             <hr>
-                <p><strong>Cliente:</strong> <a class="client-link" onclick="verHistoricoCliente(${cliente.id})">${cliente.nome}</a></p>
-                <p><strong>Equipamento:</strong> ${os.tipo || 'Não especificado'} ${os.cabo ? '<span style="color:#2980b9; font-weight:bold;">🔌 (Acompanha Cabo/Carregador)</span>' : ''}</p>
-                <p><strong>Defeito:</strong> ${os.defeito}</p>
-                <p style="background: #fff3cd; padding: 4px; border-radius: 4px; margin: 5px 0;">
-                    <strong>Obs:</strong> ${os.observacoes || '<i>Nenhuma</i>'} 
-                    <span style="cursor:pointer; font-size:0.8rem; color:#d35400; font-weight:bold; float:right;" onclick="editarObservacaoOS(${os.id})">✏️ Editar</span>
-                </p>
-                <p><strong>Abertura:</strong> ${os.dataAbertura}</p>
+            <p><strong>Cliente:</strong> ${cliente.nome}</p>
+            <p><strong>Equipamento:</strong> ${os.tipo || 'Não especificado'} (ID: ${os.equipamentoId || 'N/A'}) ${os.cabo ? ' - Deixou Cabo/Carregador' : ''}</p>
+            <p><strong>Local do Serviço:</strong> ${os.localServico || 'Interno'}</p>
+            <p><strong>Defeito Relatado:</strong> ${os.defeito}</p>
+            <p><strong>Abertura:</strong> ${os.dataAbertura}</p>
                 ${os.dataConclusao ? `<p><strong>Conclusão:</strong> ${os.dataConclusao}</p>` : ''}
             <br><h3>Itens Executados</h3>
             <ul style="line-height: 1.8;">${itensHtml || '<li>Nenhum item adicionado</li>'}</ul>
@@ -492,7 +504,12 @@ function renderizarOS(servicos, containerId) {
                 </div>
                 <hr>
                 <p><strong>Cliente:</strong> <a class="client-link" onclick="verHistoricoCliente(${cliente.id})">${cliente.nome}</a></p>
-                <p><strong>Equipamento:</strong> ${os.tipo || 'Não especificado'} ${os.cabo ? '<span style="color:#2980b9; font-weight:bold;">🔌 (Acompanha Cabo/Carregador)</span>' : ''}</p>
+                <p>
+                    <strong>Equipamento:</strong> ${os.tipo || 'Não especificado'} 
+                    ${os.cabo ? '<span style="color:#2980b9; font-weight:bold;" title="Acompanha Cabo/Carregador">🔌</span>' : ''}
+                    - <strong>ID:</strong> ${os.equipamentoId ? `<a class="client-link" onclick="verHistoricoEquipamento('${os.equipamentoId}')">${os.equipamentoId}</a>` : '<i>N/A</i>'}
+                </p>
+                <p><strong>Local de Atendimento:</strong> ${os.localServico || 'Interno'}</p>
                 <p><strong>Defeito:</strong> ${os.defeito}</p>
                 <p style="background: #fff3cd; padding: 4px; border-radius: 4px; margin: 5px 0;">
                     <strong>Obs:</strong> ${os.observacoes || '<i>Nenhuma</i>'} 
@@ -534,7 +551,11 @@ function buscarHistorico() {
     const resultados = bd.servicos.filter(os => {
         const cliente = bd.clientes.find(c => c.id === os.clienteId);
         const nomeCliente = cliente ? cliente.nome.toLowerCase() : '';
-        return nomeCliente.includes(termo) || os.defeito.toLowerCase().includes(termo);
+        const equipId = os.equipamentoId ? os.equipamentoId.toLowerCase() : '';
+
+        return nomeCliente.includes(termo) ||
+            os.defeito.toLowerCase().includes(termo) ||
+            equipId.includes(termo);
     });
 
     renderizarOS(resultados, 'resultado-busca');
