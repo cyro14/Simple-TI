@@ -67,6 +67,8 @@ document.getElementById('form-os').addEventListener('submit', (e) => {
     bd.servicos.push({
         id: Date.now(),
         clienteId: parseInt(document.getElementById('os-cliente').value),
+        tipo: document.getElementById('os-tipo').value,
+        cabo: document.getElementById('os-cabo').checked,
         defeito: document.getElementById('os-defeito').value,
         observacoes: document.getElementById('os-observacoes') ? document.getElementById('os-observacoes').value : '',
         status: 'Aberto',
@@ -211,14 +213,14 @@ function quickAddPeca() {
 function quickAddCliente() {
     const nome = prompt("Nome do Novo Cliente:");
     if (!nome) return; // Se cancelar ou deixar em branco, não faz nada
-    
+
     const telefone = prompt("Telefone do Cliente (Opcional):") || "";
-    
+
     // Cria o cliente e joga no banco
     const novoCliente = { id: Date.now(), nome: nome, telefone: telefone, descricao: 'Criado via atalho rápido na OS' };
     bd.clientes.push(novoCliente);
     salvarBD(); // Isso já vai chamar o atualizarTelas() internamente
-    
+
     // Força o select a já ficar com este cliente selecionado para poupar tempo
     document.getElementById('os-cliente').value = novoCliente.id;
 }
@@ -300,10 +302,15 @@ function imprimirOS(osId) {
         <html><head><title>Impressão OS #${os.id}</title></head><body style="font-family: Arial, sans-serif; padding: 20px;">
             <h2>Ordem de Serviço #${os.id.toString().slice(-4)}</h2>
             <hr>
-            <p><strong>Cliente:</strong> ${cliente.nome}</p>
-            <p><strong>Equipamento/Defeito:</strong> ${os.defeito}</p>
-            <p><strong>Abertura:</strong> ${os.dataAbertura}</p>
-            ${os.dataConclusao ? `<p><strong>Conclusão:</strong> ${os.dataConclusao}</p>` : ''}
+                <p><strong>Cliente:</strong> <a class="client-link" onclick="verHistoricoCliente(${cliente.id})">${cliente.nome}</a></p>
+                <p><strong>Equipamento:</strong> ${os.tipo || 'Não especificado'} ${os.cabo ? '<span style="color:#2980b9; font-weight:bold;">🔌 (Acompanha Cabo/Carregador)</span>' : ''}</p>
+                <p><strong>Defeito:</strong> ${os.defeito}</p>
+                <p style="background: #fff3cd; padding: 4px; border-radius: 4px; margin: 5px 0;">
+                    <strong>Obs:</strong> ${os.observacoes || '<i>Nenhuma</i>'} 
+                    <span style="cursor:pointer; font-size:0.8rem; color:#d35400; font-weight:bold; float:right;" onclick="editarObservacaoOS(${os.id})">✏️ Editar</span>
+                </p>
+                <p><strong>Abertura:</strong> ${os.dataAbertura}</p>
+                ${os.dataConclusao ? `<p><strong>Conclusão:</strong> ${os.dataConclusao}</p>` : ''}
             <br><h3>Itens Executados</h3>
             <ul style="line-height: 1.8;">${itensHtml || '<li>Nenhum item adicionado</li>'}</ul>
             <hr>
@@ -466,7 +473,7 @@ function renderizarOS(servicos, containerId) {
                 <span>🔧 ${p.nome} ${os.status === 'Aberto' ? `<b style="color:#e74c3c; cursor:pointer; margin-left:8px;" onclick="removerPecaOS(${os.id}, ${idx})" title="Remover item">X</b>` : ''}</span>
                 <span>R$ ${(p.precoCobrado ?? p.custo).toFixed(2)}</span>
             </div>`).join('');
-            
+
         const htmlServicos = servicosPrestados.map((s, idx) => `
             <div class="item-linha">
                 <span>⚙️ ${s.nome} ${os.status === 'Aberto' ? `<b style="color:#e74c3c; cursor:pointer; margin-left:8px;" onclick="removerServicoOS(${os.id}, ${idx})" title="Remover item">X</b>` : ''}</span>
@@ -485,8 +492,9 @@ function renderizarOS(servicos, containerId) {
                 </div>
                 <hr>
                 <p><strong>Cliente:</strong> <a class="client-link" onclick="verHistoricoCliente(${cliente.id})">${cliente.nome}</a></p>
+                <p><strong>Equipamento:</strong> ${os.tipo || 'Não especificado'} ${os.cabo ? '<span style="color:#2980b9; font-weight:bold;">🔌 (Acompanha Cabo/Carregador)</span>' : ''}</p>
                 <p><strong>Defeito:</strong> ${os.defeito}</p>
-                <p style="background: #fff3cd; padding: 4px; border-radius: 4px;">
+                <p style="background: #fff3cd; padding: 4px; border-radius: 4px; margin: 5px 0;">
                     <strong>Obs:</strong> ${os.observacoes || '<i>Nenhuma</i>'} 
                     <span style="cursor:pointer; font-size:0.8rem; color:#d35400; font-weight:bold; float:right;" onclick="editarObservacaoOS(${os.id})">✏️ Editar</span>
                 </p>

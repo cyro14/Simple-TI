@@ -30,13 +30,29 @@
                     <select id="os-cliente" required style="flex: 1;">
                         <option value="">Selecione o Cliente</option>
                     </select>
-                    <button type="button" onclick="quickAddCliente()" title="Cadastrar Cliente Rápido"
-                        style="padding: 0 12px; background-color: #3867d6; font-size: 1.2rem;">+</button>
+                    <button type="button" onclick="quickAddCliente()" title="Cadastrar Cliente Rápido" style="padding: 0 12px; background-color: #3867d6; font-size: 1.2rem; color: white; border: none; border-radius: 4px; cursor: pointer;">+</button>
                 </div>
-                <input type="text" id="os-defeito" placeholder="Defeito / Equipamento" required>
+                
+                <select id="os-tipo" required>
+                    <option value="">Tipo de Aparelho</option>
+                    <option value="PC">🖥️ PC (Desktop)</option>
+                    <option value="Notebook">💻 Notebook</option>
+                    <option value="Impressora">🖨️ Impressora</option>
+                    <option value="Rede">🌐 Equip. de Rede</option>
+                    <option value="Nobreak">🔋 Nobreak</option>
+                    <option value="Serviço">🛠️ Serviço Avulso</option>
+                </select>
+
+                <input type="text" id="os-defeito" placeholder="Defeito relatado / Modelo" required>
                 <input type="date" id="os-data-agendada" title="Data Agendada (Opcional)">
                 <input type="text" id="os-observacoes" placeholder="Observações (Opcional)">
-                <button type="submit">Abrir OS</button>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="os-cabo">
+                    <label for="os-cabo">Veio com Cabo/Carregador?</label>
+                </div>
+
+                <button type="submit" style="min-width: 120px;">Abrir OS</button>
             </form>
 
             <h3>OS em Aberto</h3>
