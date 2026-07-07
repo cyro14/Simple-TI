@@ -208,6 +208,21 @@ function quickAddPeca() {
     }
 }
 
+function quickAddCliente() {
+    const nome = prompt("Nome do Novo Cliente:");
+    if (!nome) return; // Se cancelar ou deixar em branco, não faz nada
+    
+    const telefone = prompt("Telefone do Cliente (Opcional):") || "";
+    
+    // Cria o cliente e joga no banco
+    const novoCliente = { id: Date.now(), nome: nome, telefone: telefone, descricao: 'Criado via atalho rápido na OS' };
+    bd.clientes.push(novoCliente);
+    salvarBD(); // Isso já vai chamar o atualizarTelas() internamente
+    
+    // Força o select a já ficar com este cliente selecionado para poupar tempo
+    document.getElementById('os-cliente').value = novoCliente.id;
+}
+
 function quickAddServico() {
     const nome = document.getElementById('quick-serv-nome').value;
     const preco = parseFloat(document.getElementById('quick-serv-preco').value);
@@ -360,7 +375,6 @@ function gerarRelatorio() {
 // --- Renderização ---
 function atualizarTelas() {
     // Listagens
-    // Listagens com botão de editar, excluir e detalhes corrigidos
     document.getElementById('lista-clientes').innerHTML = bd.clientes.map(c => `
         <li>
             <div>
@@ -398,8 +412,18 @@ function atualizarTelas() {
             </span>
         </li>`).join('');
 
-    let selectRel = document.getElementById('rel-cliente');
-    if (selectRel) selectRel.innerHTML = '<option value="">Todos os Clientes</option>' + bd.clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+    // --- CORREÇÃO: ATUALIZA OS DOIS DROPDOWNS DE CLIENTES ---
+    const selectOs = document.getElementById('os-cliente');
+    if (selectOs) {
+        selectOs.innerHTML = '<option value="">Selecione o Cliente</option>' + bd.clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+    }
+
+    const selectRel = document.getElementById('rel-cliente');
+    if (selectRel) {
+        selectRel.innerHTML = '<option value="">Todos os Clientes</option>' + bd.clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+    }
+    // --------------------------------------------------------
+
     // Calendário
     let inputCalendario = document.getElementById('calendario-filtro');
     if (!inputCalendario.value) {

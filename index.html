@@ -26,9 +26,13 @@
         <section id="servicos" class="tab-content active">
             <h2>Nova Ordem de Serviço</h2>
             <form id="form-os">
-                <select id="os-cliente" required>
-                    <option value="">Selecione o Cliente</option>
-                </select>
+                <div style="display: flex; gap: 5px; flex: 1;">
+                    <select id="os-cliente" required style="flex: 1;">
+                        <option value="">Selecione o Cliente</option>
+                    </select>
+                    <button type="button" onclick="quickAddCliente()" title="Cadastrar Cliente Rápido"
+                        style="padding: 0 12px; background-color: #3867d6; font-size: 1.2rem;">+</button>
+                </div>
                 <input type="text" id="os-defeito" placeholder="Defeito / Equipamento" required>
                 <input type="date" id="os-data-agendada" title="Data Agendada (Opcional)">
                 <input type="text" id="os-observacoes" placeholder="Observações (Opcional)">
